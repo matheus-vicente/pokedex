@@ -14,8 +14,8 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body>
-        <div className="flex flex-col scroll-smooth bg-gray-100">
-          <header className="fixed flex w-full flex-col items-center justify-center gap-4 bg-gray-100 p-6 shadow-sm">
+        <div className="flex h-screen flex-col bg-gray-100">
+          <header className="fixed flex w-full flex-col items-center justify-center gap-4 bg-gray-100 p-6">
             <Image
               src={logo}
               alt=""
