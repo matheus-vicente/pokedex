@@ -9,6 +9,15 @@ export type Stat = {
   effort: number;
 };
 
+export const Stats = [
+  "HP",
+  "Attack",
+  "Defense",
+  "Sp. Attack",
+  "Sp Defence",
+  "Speed",
+];
+
 export type Meta = {
   drain: number;
   healing: number;
@@ -126,6 +135,7 @@ export interface PokemonRequest {
 
 export interface PokemonBase {
   id: number;
+  img: string;
   name: string;
   height: number;
   weight: number;
@@ -136,4 +146,6 @@ export interface PokemonComplete extends PokemonBase {
   abilities: Array<Ability>;
   moves: Array<Move>;
   stats: Array<Stat>;
+  totalStats: number;
+  bestStatusValue: number;
 }

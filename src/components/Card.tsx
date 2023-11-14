@@ -19,7 +19,7 @@ export function Card({ pokemon }: CardProps) {
           width={180}
           height={180}
           alt={titleCase(pokemon.name)}
-          src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
+          src={pokemon.img}
           className=""
         />
       </div>

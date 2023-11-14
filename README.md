@@ -1,3 +1,3 @@
 # Pokédex app
 
-App pokédex utilizando Next + Zustand + Tailwind
+App pokédex utilizando Next + Tailwind

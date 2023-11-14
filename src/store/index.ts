@@ -21,6 +21,7 @@ interface PokemonState {
 }
 
 interface PokemonAction {
+  reset: () => void;
   start: () => Promise<void>;
   find: (name: string) => Promise<void>;
 }
@@ -28,6 +29,10 @@ interface PokemonAction {
 export const useStore = create<PokemonState & PokemonAction>((set) => ({
   pokemonList: [],
   selectedPokemon: {} as PokemonComplete,
+
+  reset: () => {
+    set(() => ({ selectedPokemon: {} as PokemonComplete }));
+  },
 
   start: async () => {
     const list: PokemonBase[] = [];
@@ -45,7 +50,7 @@ export const useStore = create<PokemonState & PokemonAction>((set) => ({
         list.push({
           ...data,
           types,
-          name: data.name,
+          img: data.sprites.front_default,
         });
       } catch (error: any) {
         console.log(error.message);
@@ -88,12 +93,20 @@ export const useStore = create<PokemonState & PokemonAction>((set) => ({
       });
 
       const stats: Array<Stat> = [];
+      let bestStatusValue: number = 0;
+      let totalStats: number = 0;
 
-      data.stats.forEach((item) => {
+      data.stats.forEach(({ stat, base_stat, effort }) => {
+        if (base_stat > bestStatusValue) {
+          bestStatusValue = base_stat;
+        }
+
+        totalStats += base_stat;
+
         const s: Stat = {
-          ...item,
-          base: item.base_stat,
-          name: item.stat.name,
+          effort,
+          name: stat.name,
+          base: base_stat,
         };
 
         stats.push(s);
@@ -125,10 +138,13 @@ export const useStore = create<PokemonState & PokemonAction>((set) => ({
 
       const pokemon: PokemonComplete = {
         ...data,
+        img: data.sprites.front_default,
         types,
         moves,
         stats,
         abilities,
+        totalStats,
+        bestStatusValue,
       };
 
       set(() => ({ selectedPokemon: pokemon }));

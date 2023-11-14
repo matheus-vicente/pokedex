@@ -1,3 +1,6 @@
+import { Theme } from "@radix-ui/themes";
+
+import "@radix-ui/themes/styles.css";
 import "../styles/globals.css";
 
 export default function RootLayout({
@@ -8,7 +11,9 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body>
-        <div className="flex h-screen flex-col bg-gray-100">{children}</div>
+        <Theme>
+          <div className="flex h-screen flex-col bg-gray-100">{children}</div>
+        </Theme>
       </body>
     </html>
   );

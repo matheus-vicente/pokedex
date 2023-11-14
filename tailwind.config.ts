@@ -16,6 +16,9 @@ const config: Config = {
       margin: {
         "sm-main": "162px",
       },
+      height: {
+        "main-sm": "calc(100% - 280px)",
+      },
     },
   },
   plugins: [],
