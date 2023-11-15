@@ -24,11 +24,7 @@ export default function Pokemon({ params }: { params: { pokemon: string } }) {
     };
   }, [find, params.pokemon, reset]);
 
-  if (
-    !selectedPokemon.name ||
-    selectedPokemon.types.length === 0 ||
-    selectedPokemon.abilities.length === 0
-  ) {
+  if (!selectedPokemon.name) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loader className="animate-spin" />

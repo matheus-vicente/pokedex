@@ -6,59 +6,103 @@ import {
   Stat,
   Ability,
   PokemonBase,
-  PokemonRequest,
-  PokemonComplete,
   MoveRequest,
+  PokemonRequest,
   AbilityRequest,
+  PokemonComplete,
   PokemonListRequest,
 } from "@/types/pokemon";
 
-const LAST_POKEMON_ID = 1017;
-
 interface PokemonState {
-  pokemonList: Array<PokemonBase>;
+  pokemonList: Array<PokemonBase> | undefined;
   selectedPokemon: PokemonComplete;
+  next: string | null;
+  prev: string | null;
 }
 
 interface PokemonAction {
   reset: () => void;
   start: () => Promise<void>;
   find: (name: string) => Promise<void>;
+  toPage: (url: string) => Promise<void>;
 }
 
 export const useStore = create<PokemonState & PokemonAction>((set) => ({
-  pokemonList: [],
+  pokemonList: undefined,
   selectedPokemon: {} as PokemonComplete,
+  next: null,
+  prev: null,
 
   reset: () => {
     set(() => ({ selectedPokemon: {} as PokemonComplete }));
   },
 
   start: async () => {
-    const list: PokemonBase[] = [];
+    try {
+      const { data } = await api.get<PokemonListRequest>(
+        "pokemon?limit=20&offset=0",
+      );
 
-    for (let i = 1; i <= 151; i++) {
-      try {
-        const { data } = await api.get<PokemonRequest>(`pokemon/${i}`);
+      const pokemonList: Array<PokemonBase> = [];
 
-        const types: Array<string> = [data.types[0].type.name];
+      for (let i = 0; i < data.results.length; i++) {
+        const { data: pokemonData } = await apiBasic.get<PokemonRequest>(
+          data.results[i].url,
+        );
 
-        if (!!data.types[1]) {
-          types.push(data.types[1].type.name);
-        }
+        const img = pokemonData.sprites.front_default;
+        const types = pokemonData.types.map(({ type }) => type.name);
 
-        list.push({
-          ...data,
+        const p: PokemonBase = {
+          img,
           types,
-          img: data.sprites.front_default,
-        });
-      } catch (error: any) {
-        console.log(error.message);
-      }
-    }
+          id: pokemonData.id,
+          name: pokemonData.name,
+          weight: pokemonData.weight,
+          height: pokemonData.height,
+        };
 
-    set(() => ({ pokemonList: list }));
+        pokemonList.push(p);
+      }
+
+      set(() => ({ pokemonList, next: data.next, prev: data.previous }));
+    } catch (error) {
+      console.log(error);
+    }
   },
+
+  toPage: async (url: string) => {
+    try {
+      const { data } = await api.get<PokemonListRequest>(url);
+
+      const pokemonList: Array<PokemonBase> = [];
+
+      for (let i = 0; i < data.results.length; i++) {
+        const { data: pokemonData } = await apiBasic.get<PokemonRequest>(
+          data.results[i].url,
+        );
+
+        const img = pokemonData.sprites.front_default;
+        const types = pokemonData.types.map(({ type }) => type.name);
+
+        const p: PokemonBase = {
+          img,
+          types,
+          id: pokemonData.id,
+          name: pokemonData.name,
+          weight: pokemonData.weight,
+          height: pokemonData.height,
+        };
+
+        pokemonList.push(p);
+      }
+
+      set(() => ({ pokemonList, next: data.next, prev: data.previous }));
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   find: async (name: string) => {
     try {
       const { data } = await api.get<PokemonRequest>(`/pokemon/${name}`);

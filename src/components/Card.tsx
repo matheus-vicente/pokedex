@@ -1,16 +1,18 @@
 import Link from "next/link";
 import Image from "next/image";
+import { HTMLAttributes } from "react";
 
 import { titleCase } from "@/utils/titleCase";
 import { PokemonBase } from "@/types/pokemon";
 
-interface CardProps {
+interface CardProps extends HTMLAttributes<HTMLAnchorElement> {
   pokemon: PokemonBase;
 }
 
-export function Card({ pokemon }: CardProps) {
+export function Card({ pokemon, ...props }: CardProps) {
   return (
     <Link
+      {...props}
       href={`/${pokemon.name}`}
       className="w-full rounded-md bg-white shadow-sm"
     >
